@@ -1,0 +1,53 @@
+name: News
+
+on:
+  schedule:
+    - cron: "17 * * * *"   # once an hour, at minute 17 (UTC). Avoid :00, GitHub is busiest then.
+  workflow_dispatch:        # lets you run it manually from the Actions tab
+
+concurrency:
+  group: news
+  cancel-in-progress: false
+
+permissions:
+  contents: write           # needed to save the "already posted" list on the `state` branch
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10     # hard safety limit
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Restore state
+        run: |
+          git fetch origin state --depth=1 2>/dev/null \
+            && git show origin/state:state.json > state.json \
+            || echo '{"seen":{}}' > state.json
+
+      - name: Post news
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+          CHANNEL_FOOTER: ${{ secrets.CHANNEL_ID }}
+        run: python news.py
+
+      - name: Save state
+        if: always()
+        run: |
+          cp state.json /tmp/state.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan state-new
+          git rm -rf --quiet .
+          cp /tmp/state.json state.json
+          git add state.json
+          git commit --quiet -m "update state"
+          git push --force origin HEAD:state
