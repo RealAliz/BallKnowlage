@@ -10,6 +10,7 @@
 2. Repo > Settings > Secrets and variables > Actions > New repository secret:
    - `BOT_TOKEN` : token from @BotFather
    - `CHANNEL_ID`: your channel @username (e.g. `@mychannel`)
+   - `FOOTBALL_DATA_KEY`: free key from football-data.org (for the morning results/schedule; no Europa League on the free plan)
 3. Add your bot as an admin of the channel (permission: post messages).
 4. Actions tab > enable workflows > run "News" once manually (first run only records current news,
    posts nothing), then run "Morning digest" manually to test it.
