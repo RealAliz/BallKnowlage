@@ -6,7 +6,6 @@ NEWS_FEEDS = [
     {"name": "BBC Sport", "url": "https://feeds.bbci.co.uk/sport/football/rss.xml"},
     {"name": "The Guardian", "url": "https://www.theguardian.com/football/rss"},
     {"name": "Sky Sports", "url": "https://www.skysports.com/rss/12040"},
-    {"name": "ESPN FC", "url": "https://www.espn.com/espn/rss/soccer/news"},
     {"name": "Football Italia", "url": "https://football-italia.net/feed/"},
     # Persian (not verified from my side - open each URL in a browser once.
     # Iranian sites sometimes block foreign servers like GitHub's; if so, remove them.)
@@ -36,6 +35,8 @@ MAX_AGE_HOURS = 8            # ignore items older than this
 MAX_POSTS_PER_RUN = 8        # posts per hourly run
 POST_GAP_SECONDS = (20, 45)  # random pause between posts (looks natural, spreads the run)
 RUN_BUDGET_SECONDS = 360     # hard stop for posting after ~6 minutes
+VIDEO_ENABLED = True         # post the video itself when the news item is a video
+MAX_VIDEO_MB = 45            # Telegram bots can upload up to 50 MB
 IMAGE_PROBABILITY = 0.3      # share of news posts that get a picture (if one exists)
 
 # =====================  MORNING DIGEST  =====================

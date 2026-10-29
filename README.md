@@ -10,6 +10,7 @@
 2. Repo > Settings > Secrets and variables > Actions > New repository secret:
    - `BOT_TOKEN` : token from @BotFather
    - `CHANNEL_ID`: your channel @username (e.g. `@mychannel`)
+   - `ANTHROPIC_API_KEY` (optional): translates with Claude instead of free Google Translate, which GitHub's servers often get blocked on (a few cents/day)
    - `FOOTBALL_DATA_KEY`: free key from football-data.org (for the morning results/schedule; no Europa League on the free plan)
 3. Add your bot as an admin of the channel (permission: post messages).
 4. Actions tab > enable workflows > run "News" once manually (first run only records current news,
