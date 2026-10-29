@@ -7,6 +7,11 @@ NEWS_FEEDS = [
     {"name": "The Guardian", "url": "https://www.theguardian.com/football/rss"},
     {"name": "Sky Sports", "url": "https://www.skysports.com/rss/12040"},
     {"name": "Football Italia", "url": "https://football-italia.net/feed/"},
+    # Google News search feeds: a way to follow sites that have no RSS of their own.
+    # Headline + link only (no photos). Unverified from my side; check the log lines.
+    {"name": "OneFootball", "url": "https://news.google.com/rss/search?q=site:onefootball.com+when:1d&hl=en&gl=US&ceid=US:en"},
+    {"name": "ESPN FC", "url": "https://news.google.com/rss/search?q=site:espn.com/soccer+when:1d&hl=en&gl=US&ceid=US:en"},
+    {"name": "Fabrizio Romano (via news sites)", "url": "https://news.google.com/rss/search?q=%22Fabrizio+Romano%22+when:1d&hl=en&gl=US&ceid=US:en"},
     # Persian (not verified from my side - open each URL in a browser once.
     # Iranian sites sometimes block foreign servers like GitHub's; if so, remove them.)
     {"name": "ورزش سه", "url": "https://www.varzesh3.com/rss/all", "filter": True},
