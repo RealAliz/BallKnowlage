@@ -232,25 +232,23 @@ def main():
         else:
             keep.append(i)
 
-    # Don't post a stale backlog: keep only the newest items, skip older overflow
-    if len(keep) > MAX_POSTS_PER_RUN:
-        skipped = keep[:-MAX_POSTS_PER_RUN]
-        for i in skipped:
-            state["seen"][i["id"]] = now
-        print(f"[info] skipping {len(skipped)} older items to avoid a backlog")
-        keep = keep[-MAX_POSTS_PER_RUN:]
-
-    posted = fails = 0
-    for item in keep:
-        if time.time() - start > RUN_BUDGET_SECONDS:
-            break  # leftovers go out in the next run
+    # Newest first: translate until enough posts are ready, then send oldest -> newest.
+    # Items that fail to translate (or aren't reached) stay unposted and are retried next run.
+    ready = []
+    for item in reversed(keep):
+        if len(ready) >= MAX_POSTS_PER_RUN or time.time() - start > RUN_BUDGET_SECONDS:
+            break
         msg = build_message(item)
         if msg is None:
-            fails += 1
-            if fails >= 3:
-                print("[error] translation keeps failing, stopping this run")
-                break
             continue
+        ready.append((item, msg))
+    ready.reverse()
+    print(f"[info] {len(ready)} item(s) ready to post, {len(keep) - len(ready)} waiting")
+
+    posted = 0
+    for idx, (item, msg) in enumerate(ready):
+        if time.time() - start > RUN_BUDGET_SECONDS:
+            break
         try:
             use_image = (
                 item["image"]
@@ -280,7 +278,8 @@ def main():
             state["seen"][item["id"]] = time.time()
             posted += 1
             print(f"posted: {item['title'][:70]}")
-            time.sleep(random.randint(*POST_GAP_SECONDS))
+            if idx < len(ready) - 1:
+                time.sleep(random.randint(*POST_GAP_SECONDS))
         except Exception as ex:
             print(f"[error] send failed: {ex}")
 

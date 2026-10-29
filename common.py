@@ -85,6 +85,32 @@ def _google(text):
     return None
 
 
+_gtx_fails = 0
+
+
+def _gtx(text):
+    """Second free option: Google's lightweight web endpoint (separate from the first one)."""
+    global _gtx_fails
+    if _gtx_fails >= 2:
+        return None
+    try:
+        time.sleep(0.7)
+        r = requests.get(
+            "https://translate.googleapis.com/translate_a/single",
+            params={"client": "gtx", "sl": "auto", "tl": "fa", "dt": "t", "q": text[:4500]},
+            headers=HEADERS,
+            timeout=20,
+        )
+        if not r.ok:
+            raise RuntimeError(f"HTTP {r.status_code}")
+        out = "".join(part[0] for part in r.json()[0] if part and part[0])
+        return out.strip() or None
+    except Exception as ex:
+        _gtx_fails += 1
+        print(f"[warn] backup translator failed ({ex})")
+        return None
+
+
 def _claude(text):
     try:
         r = requests.post(
@@ -130,7 +156,10 @@ def to_persian(text):
         out = _claude(text)
         if out:
             return out
-    return _google(text)
+    out = _google(text)
+    if out is None:
+        out = _gtx(text)
+    return out
 
 
 # ---------- hashtags ----------
